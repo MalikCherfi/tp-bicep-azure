@@ -29,7 +29,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '22'
-          sourceAddressPrefix: '${myIpAddress}/32'
+          sourceAddressPrefix: myIpAddress
           destinationAddressPrefix: '*'
         }
       }
