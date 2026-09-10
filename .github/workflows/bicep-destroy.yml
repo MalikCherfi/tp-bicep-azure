@@ -1,35 +1,35 @@
 name: Destroy Azure Infrastructure
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
 
 jobs:
-    destroy-infrastructure:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Connexion à Azure via OIDC
-              uses: azure/login@v2
-              with:
-                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
-                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  destroy-infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connexion à Azure via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-            - name: Suppression des Resource Groups
-              run: |
-                  ALIAS="${{ secrets.USER_ALIAS }}"
-                  echo "Recherche des groupes de ressources pour l'alias : $ALIAS"
+      - name: Suppression des Resource Groups
+        run: |
+          ALIAS="${{ secrets.USER_ALIAS }}"
+          echo "Recherche des groupes de ressources pour l'alias : $ALIAS"
 
-                  RESOURCE_GROUPS=$(az group list --query "[?starts_with(name, 'rg-${ALIAS}-tp104-')].name" -o tsv)
+          RESOURCE_GROUPS=$(az group list --query "[?starts_with(name, 'rg-${ALIAS}-tp104-')].name" -o tsv)
 
-                  if [ -n "$RESOURCE_GROUPS" ]; then
-                    echo "Groupes à supprimer :"
-                    echo "$RESOURCE_GROUPS"
-                    echo "$RESOURCE_GROUPS" | xargs -r -I {} az group delete --name {} --yes
-                    echo "Suppression terminée."
-                  else
-                    echo "Aucun groupe de ressources correspondant trouvé."
-                  fi
+          if [ -n "$RESOURCE_GROUPS" ]; then
+            echo "Groupes à supprimer :"
+            echo "$RESOURCE_GROUPS"
+            echo "$RESOURCE_GROUPS" | xargs -r -I {} az group delete --name {} --yes
+            echo "Suppression terminée."
+          else
+            echo "Aucun groupe de ressources correspondant trouvé."
+          fi
