@@ -1,0 +1,63 @@
+name: Provision Azure Infrastructure
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    deploy-infrastructure:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout du code
+              uses: actions/checkout@v4
+
+            - name: Connexion à Azure via OIDC
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+            - name: Déploiement Étape 1 - VM Linux
+              run: |
+                  ALIAS="${{ secrets.USER_ALIAS }}"
+                  RG="rg-${ALIAS}-tp104-vm"
+                  az group create --name $RG --location westeurope
+                  az deployment group create \
+                    --resource-group $RG \
+                    --template-file ./vm/main.bicep \
+                    --parameters myIpAddress="${{ secrets.MY_IP }}" sshPublicKey="${{ secrets.SSH_PUBLIC_KEY }}"
+
+            - name: Déploiement Étape 2 - VMSS & Load Balancer
+              run: |
+                  ALIAS="${{ secrets.USER_ALIAS }}"
+                  RG="rg-${ALIAS}-tp104-vmss"
+                  az group create --name $RG --location westeurope
+                  az deployment group create \
+                    --resource-group $RG \
+                    --template-file ./vmss/main.bicep \
+                    --parameters myIpAddress="${{ secrets.MY_IP }}" sshPublicKey="${{ secrets.SSH_PUBLIC_KEY }}"
+
+            - name: Déploiement Étape 3 - App Service & Slots
+              run: |
+                  ALIAS="${{ secrets.USER_ALIAS }}"
+                  RG="rg-${ALIAS}-tp104-appservice"
+                  az group create --name $RG --location westeurope
+                  az deployment group create \
+                    --resource-group $RG \
+                    --template-file ./appservice/main.bicep
+
+            - name: Déploiement Étape 4 - Azure Container Instances
+              run: |
+                  ALIAS="${{ secrets.USER_ALIAS }}"
+                  RG="rg-${ALIAS}-tp104-aci"
+                  az group create --name $RG --location westeurope
+                  az deployment group create \
+                    --resource-group $RG \
+                    --template-file ./aci/main.bicep
