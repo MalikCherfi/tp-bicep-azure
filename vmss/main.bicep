@@ -161,7 +161,7 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2023-09-01' = {
   name: vmssName
   location: location
   sku: {
-    name: 'Standard_B1s'
+    name: 'Standard_D2as_v7'
     tier: 'Standard'
     capacity: instanceCount
   }
