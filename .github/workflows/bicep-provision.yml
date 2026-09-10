@@ -25,7 +25,7 @@ jobs:
         run: |
           ALIAS="${{ secrets.USER_ALIAS }}"
           RG="rg-${ALIAS}-tp104-vm"
-          az group create --name $RG --location westeurope
+          az group create --name $RG --location francecentral
           az deployment group create \
             --resource-group $RG \
             --template-file ./vm/main.bicep \
@@ -35,7 +35,7 @@ jobs:
         run: |
           ALIAS="${{ secrets.USER_ALIAS }}"
           RG="rg-${ALIAS}-tp104-vmss"
-          az group create --name $RG --location westeurope
+          az group create --name $RG --location francecentral
           az deployment group create \
             --resource-group $RG \
             --template-file ./vmss/main.bicep \
@@ -45,7 +45,7 @@ jobs:
         run: |
           ALIAS="${{ secrets.USER_ALIAS }}"
           RG="rg-${ALIAS}-tp104-appservice"
-          az group create --name $RG --location westeurope
+          az group create --name $RG --location francecentral
           az deployment group create \
             --resource-group $RG \
             --template-file ./appservice/main.bicep
@@ -54,7 +54,7 @@ jobs:
         run: |
           ALIAS="${{ secrets.USER_ALIAS }}"
           RG="rg-${ALIAS}-tp104-aci"
-          az group create --name $RG --location westeurope
+          az group create --name $RG --location francecentral
           az deployment group create \
             --resource-group $RG \
             --template-file ./aci/main.bicep
