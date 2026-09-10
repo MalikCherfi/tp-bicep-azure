@@ -15,7 +15,7 @@ param myIpAddress string
 param location string = resourceGroup().location
 
 @description('Taille de la machine virtuelle.')
-param vmSize string = 'Standard_B1s'
+param vmSize string = 'Standard_B1ms'
 
 var dnsLabel = '${prefix}-vm-${uniqueString(resourceGroup().id)}'
 var vnetName = '${prefix}-vnet'
@@ -39,7 +39,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '22'
-          sourceAddressPrefix: '${myIpAddress}/32'
+          sourceAddressPrefix: myIpAddress
           destinationAddressPrefix: '*'
         }
       }
