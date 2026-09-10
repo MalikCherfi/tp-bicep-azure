@@ -15,7 +15,7 @@ param myIpAddress string
 param location string = resourceGroup().location
 
 @description('Taille de la machine virtuelle.')
-param vmSize string = 'Standard_B1ms'
+param vmSize string = 'Standard_D2as_v7'
 
 var dnsLabel = '${prefix}-vm-${uniqueString(resourceGroup().id)}'
 var vnetName = '${prefix}-vnet'
